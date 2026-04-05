@@ -65,25 +65,44 @@
         </div>
       </div>
 
-      <!-- Assistant message -->
+      <!-- ═══════════════════════════════════════════
+           Assistant message — structured layout
+           ═══════════════════════════════════════════ -->
       <div *ngIf="msg.role === 'assistant'" class="bubble assistant-bubble">
         <div class="avatar">🤖</div>
         <div class="response-content">
 
-          <!-- Risk badges -->
-          <div class="risk-section" *ngIf="msg.riskLevel || msg.ruleRisk">
-            <span class="risk-label">Risk Level</span>
-            <span *ngIf="msg.riskLevel" class="risk-badge" [ngClass]="getRiskClass(msg.riskLevel)">
+          <!-- 1. Main response body -->
+          <p class="plain-text-response">{{ msg.bodyText || msg.content }}</p>
+
+          <!-- divider before meta info -->
+          <div class="meta-divider"></div>
+
+          <!-- 2. Risk Level — own line -->
+          <div class="response-meta-row" *ngIf="msg.riskLevel">
+            <span class="meta-label">Risk Level</span>
+            <span class="risk-badge" [ngClass]="getRiskClass(msg.riskLevel)">
               <span class="risk-dot"></span>
-              {{ msg.riskLevel | uppercase }}
-            </span>
-            <span *ngIf="msg.ruleRisk" class="rule-badge" [ngClass]="getRiskClass(msg.ruleRisk)">
-              Rule-based: {{ msg.ruleRisk }}
+              {{ getRiskLabel(msg.riskLevel) }}
             </span>
           </div>
 
-          <!-- The response text — always rendered directly, no conditions -->
-          <p class="plain-text-response">{{ msg.content }}</p>
+          <!-- 3. Rule-based — own line, with explanation -->
+          <div class="response-meta-row" *ngIf="msg.ruleRisk">
+            <span class="meta-label">
+              Automated Classification
+              <span class="meta-hint">keyword-based engine</span>
+            </span>
+            <span class="rule-badge" [ngClass]="getRiskClass(msg.ruleRisk)">
+              {{ msg.ruleRisk | uppercase }}
+            </span>
+          </div>
+
+          <!-- 4. Reference — own line -->
+          <div class="response-meta-row reference-row" *ngIf="msg.reference">
+            <span class="meta-label">📚 Medical Reference</span>
+            <span class="reference-text">{{ msg.reference }}</span>
+          </div>
 
           <span class="ts">{{ msg.timestamp | date:'HH:mm' }}</span>
         </div>

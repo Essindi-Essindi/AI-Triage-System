@@ -6,9 +6,13 @@ import { FeedbackComponent } from '../feedback/feedback';
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'loading';
+  // Parsed sections (only for assistant messages)
+  bodyText?: string;       // main response paragraphs
+  riskLevel?: string;      // extracted: low | medium | high
+  ruleRisk?: string;       // from rule-based engine
+  reference?: string;      // the "Reference: ..." line
+  // Raw (kept for DB / fallback)
   content: string;
-  ruleRisk?: string;
-  riskLevel?: string;
   timestamp: Date;
   showFeedback?: boolean;
   feedbackDone?: boolean;
@@ -53,9 +57,7 @@ export class ChatComponent implements AfterViewChecked {
   }
 
   private scrollToBottom() {
-    try {
-      this.messagesEnd?.nativeElement.scrollIntoView({ behavior: 'smooth' });
-    } catch {}
+    try { this.messagesEnd?.nativeElement.scrollIntoView({ behavior: 'smooth' }); } catch {}
   }
 
   private cycleLoadingPhrases() {
@@ -68,59 +70,69 @@ export class ChatComponent implements AfterViewChecked {
   }
 
   private stopLoadingPhrases() {
-    if (this.phraseInterval) {
-      clearInterval(this.phraseInterval);
-      this.phraseInterval = null;
-    }
+    if (this.phraseInterval) { clearInterval(this.phraseInterval); this.phraseInterval = null; }
   }
 
   /**
-   * Extracts the risk level from the LLM plain-text response.
-   * The backend prompt asks the LLM to write "Risk level: high/medium/low"
-   * (or the French equivalent "Niveau de risque: …").
+   * Splits the LLM plain-text response into three display sections:
+   *   bodyText  — everything before "Risk level:" line
+   *   riskLevel — low | medium | high
+   *   reference — the "Reference: ..." line
    */
-  extractRiskFromText(text: string): string {
-    if (!text) return '';
-    const lower = text.toLowerCase();
+  parseResponse(raw: string): { bodyText: string; riskLevel: string; reference: string } {
+    const riskRegex = /^Risk level:\s*(low|medium|high)\s*$/im;
+    const refRegex  = /^Reference:\s*(.+)$/im;
 
-    // Match "risk level: high" / "niveau de risque : high" and variants
-    const match = lower.match(/(?:risk level|niveau de risque)\s*[:–-]\s*(high|medium|low)/i);
-    if (match) return match[1].toLowerCase();
+    let bodyText  = raw;
+    let riskLevel = '';
+    let reference = '';
 
-    // Fallback keyword scan
-    if (lower.includes('risk level: high')   || lower.includes('niveau de risque : high'))   return 'high';
-    if (lower.includes('risk level: medium') || lower.includes('niveau de risque : medium')) return 'medium';
-    if (lower.includes('risk level: low')    || lower.includes('niveau de risque : low'))    return 'low';
+    // Extract reference line
+    const refMatch = raw.match(refRegex);
+    if (refMatch) {
+      reference = refMatch[0].replace(/^Reference:\s*/i, '').trim();
+      bodyText  = bodyText.replace(refMatch[0], '').trim();
+    }
 
-    // Broader fallback
-    if (lower.includes('high risk'))   return 'high';
-    if (lower.includes('medium risk')) return 'medium';
-    if (lower.includes('low risk'))    return 'low';
+    // Extract risk level line
+    const riskMatch = raw.match(riskRegex);
+    if (riskMatch) {
+      riskLevel = riskMatch[1].toLowerCase();
+      bodyText  = bodyText.replace(riskMatch[0], '').trim();
+    }
 
-    return '';
+    // Clean up any leftover blank lines from the removals
+    bodyText = bodyText.replace(/\n{3,}/g, '\n\n').trim();
+
+    return { bodyText, riskLevel, reference };
+  }
+
+  getRiskClass(risk: string): string {
+    switch (risk?.toLowerCase()) {
+      case 'high':   return 'risk-high';
+      case 'medium': return 'risk-medium';
+      case 'low':    return 'risk-low';
+      default:       return 'risk-unknown';
+    }
+  }
+
+  getRiskLabel(risk: string): string {
+    switch (risk?.toLowerCase()) {
+      case 'high':   return '🔴 HIGH RISK';
+      case 'medium': return '🟠 MEDIUM RISK';
+      case 'low':    return '🟢 LOW RISK';
+      default:       return '⚪ RISK UNKNOWN';
+    }
   }
 
   send() {
     const text = this.userInput.trim();
     if (!text || this.isLoading) return;
 
-    // Add user bubble
-    this.messages.push({
-      role: 'user',
-      content: text,
-      timestamp: new Date(),
-      id: this.msgCounter++
-    });
+    this.messages.push({ role: 'user', content: text, timestamp: new Date(), id: this.msgCounter++ });
 
-    // Add loading bubble and hold a stable reference to it
     const loadingId = this.msgCounter++;
-    const loadingMsg: ChatMessage = {
-      role: 'loading',
-      content: '',
-      timestamp: new Date(),
-      id: loadingId
-    };
-    this.messages.push(loadingMsg);
+    this.messages.push({ role: 'loading', content: '', timestamp: new Date(), id: loadingId });
 
     this.userInput = '';
     this.isLoading = true;
@@ -133,93 +145,58 @@ export class ChatComponent implements AfterViewChecked {
       language: this.language
     };
 
-    console.log('[Chat] Sending request:', request);
-
     this.triageService.analyze(request).subscribe({
       next: (res) => {
-        console.log('[Chat] Got response:', res);
-
         this.stopLoadingPhrases();
         this.isLoading = false;
-
-        // Remove loading bubble by its stable id — never fails silently
         this.messages = this.messages.filter(m => m.id !== loadingId);
 
-        const llmText = res.llm_result || '(no response received)';
-        const riskFromText = this.extractRiskFromText(llmText);
+        const raw = res.llm_result || '(no response received)';
+        const { bodyText, riskLevel, reference } = this.parseResponse(raw);
 
         const assistantMsgId = this.msgCounter++;
         this.messages.push({
           role: 'assistant',
-          content: llmText,
+          content: raw,
+          bodyText,
+          riskLevel: riskLevel || res.rule_based_risk,
           ruleRisk: res.rule_based_risk,
-          riskLevel: riskFromText || res.rule_based_risk,
+          reference,
           timestamp: new Date(),
           showFeedback: false,
           feedbackDone: false,
           id: assistantMsgId
         });
 
-        // Trigger change detection so Angular re-renders immediately
         this.cdr.detectChanges();
 
-        // Show feedback widget after a short delay
         setTimeout(() => {
           const msg = this.messages.find(m => m.id === assistantMsgId);
-          if (msg) {
-            msg.showFeedback = true;
-            this.cdr.detectChanges();
-          }
+          if (msg) { msg.showFeedback = true; this.cdr.detectChanges(); }
         }, 800);
       },
 
       error: (err) => {
-        console.error('[Chat] Error:', err);
-
         this.stopLoadingPhrases();
         this.isLoading = false;
-
-        // Remove loading bubble
         this.messages = this.messages.filter(m => m.id !== loadingId);
 
         const errMsg = err.status === 429
           ? '⚠️ The AI service is temporarily rate-limited. Please wait a moment and try again.'
           : `⚠️ Error ${err.status || ''}: Unable to reach the medical server. Check that the backend is running on localhost:8080.`;
 
-        this.messages.push({
-          role: 'assistant',
-          content: errMsg,
-          timestamp: new Date(),
-          id: this.msgCounter++
-        });
-
+        this.messages.push({ role: 'assistant', content: errMsg, timestamp: new Date(), id: this.msgCounter++ });
         this.cdr.detectChanges();
       }
     });
   }
 
   onKeyDown(event: KeyboardEvent) {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      this.send();
-    }
-  }
-
-  getRiskClass(risk: string): string {
-    switch (risk?.toLowerCase()) {
-      case 'high':   return 'risk-high';
-      case 'medium': return 'risk-medium';
-      case 'low':    return 'risk-low';
-      default:       return 'risk-unknown';
-    }
+    if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); this.send(); }
   }
 
   onFeedbackDone(msgId: number) {
     const msg = this.messages.find(m => m.id === msgId);
-    if (msg) {
-      msg.feedbackDone = true;
-      msg.showFeedback = false;
-      this.cdr.detectChanges();
-    }
+    if (msg) { msg.feedbackDone = true; msg.showFeedback = false; this.cdr.detectChanges(); }
   }
 }
