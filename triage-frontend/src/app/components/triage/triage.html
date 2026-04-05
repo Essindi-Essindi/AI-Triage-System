@@ -1,0 +1,92 @@
+<div class="container">
+  <h1>AI Healthcare Triage Assistant</h1>
+  <p class="subtitle">Describe your symptoms and receive an instant risk assessment.</p>
+
+  <div class="form-group">
+    <input type="number" [(ngModel)]="age" placeholder="Your age" />
+    <input type="text" [(ngModel)]="medicalHistory" placeholder="Medical history (e.g. diabetes, none)" />
+    <textarea [(ngModel)]="symptoms"
+              placeholder="e.g. I have a fever, headache and feel very tired..."
+              rows="4">
+    </textarea>
+
+    <div class="language-group">
+      <label>Language:</label>
+      <select [(ngModel)]="language">
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+      </select>
+    </div>
+
+    <button (click)="analyze()" [disabled]="loading">
+      {{ loading ? 'Analyzing...' : 'Analyze Symptoms' }}
+    </button>
+  </div>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="llmResult" class="result">
+
+    <!-- Risk levels side by side — RC3 comparison -->
+    <div class="risk-row">
+      <div class="risk-box">
+        <span class="risk-label">AI Risk Level</span>
+        <div class="risk" [ngClass]="llmResult.risk_level">
+          {{ llmResult.risk_level | uppercase }}
+        </div>
+      </div>
+      <div class="risk-box">
+        <span class="risk-label">Rule-Based Risk</span>
+        <div class="risk" [ngClass]="ruleRisk">
+          {{ ruleRisk | uppercase }}
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Symptoms Detected</h3>
+      <ul>
+        <li *ngFor="let s of llmResult.symptoms">{{ s }}</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3>Recommendations</h3>
+      <ul>
+        <li *ngFor="let r of llmResult.recommendations">{{ r }}</li>
+      </ul>
+    </div>
+
+    <p class="disclaimer">
+      This is not a medical diagnosis. Always consult a qualified physician.
+    </p>
+
+    <!-- Feedback section — RC6 -->
+    <div class="feedback" *ngIf="!feedbackSent">
+      <h3>Was this helpful?</h3>
+      <div class="feedback-buttons">
+        <button (click)="feedbackRating = 'useful'"
+                [class.selected]="feedbackRating === 'useful'">
+          Useful
+        </button>
+        <button (click)="feedbackRating = 'not useful'"
+                [class.selected]="feedbackRating === 'not useful'">
+          Not Useful
+        </button>
+      </div>
+      <textarea [(ngModel)]="feedbackComment"
+                placeholder="Optional comment..."
+                rows="2">
+      </textarea>
+      <button class="submit-feedback" (click)="submitFeedback()"
+              [disabled]="!feedbackRating">
+        Submit Feedback
+      </button>
+    </div>
+
+    <div *ngIf="feedbackSent" class="feedback-thanks">
+      Thank you for your feedback!
+    </div>
+
+  </div>
+</div>

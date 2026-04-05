@@ -1,0 +1,127 @@
+<div class="chat-wrapper">
+  <!-- Settings Bar -->
+  <div class="settings-bar">
+    <div class="setting-group">
+      <label>
+        <span class="setting-icon">🌐</span>
+        <span class="setting-label">Language</span>
+      </label>
+      <div class="seg-control">
+        <button [class.active]="language === 'en'" (click)="language = 'en'">EN</button>
+        <button [class.active]="language === 'fr'" (click)="language = 'fr'">FR</button>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <label>
+        <span class="setting-icon">🎂</span>
+        <span class="setting-label">Age</span>
+      </label>
+      <input type="number" [(ngModel)]="age" min="1" max="120" class="age-input" />
+    </div>
+
+    <div class="setting-group history-group">
+      <label>
+        <span class="setting-icon">📋</span>
+        <span class="setting-label">Medical History</span>
+      </label>
+      <input type="text"
+             [(ngModel)]="medicalHistory"
+             placeholder="e.g. diabetes, hypertension..."
+             class="history-input" />
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="messages-area">
+    <div *ngIf="messages.length === 0" class="empty-state">
+      <div class="pulse-ring"></div>
+      <div class="empty-icon">🩺</div>
+      <h3>{{ language === 'fr' ? 'Comment puis-je vous aider ?' : 'How can I help you today?' }}</h3>
+      <p>{{ language === 'fr' ? 'Décrivez vos symptômes ci-dessous pour commencer.' : 'Describe your symptoms below to get started.' }}</p>
+      <div class="suggestion-chips">
+        <button (click)="userInput = 'I have a fever and headache'; send()" class="chip">🌡️ Fever &amp; Headache</button>
+        <button (click)="userInput = 'Chest pain and difficulty breathing'; send()" class="chip">💔 Chest Pain</button>
+        <button (click)="userInput = 'Mild cough and runny nose'; send()" class="chip">🤧 Cold Symptoms</button>
+      </div>
+    </div>
+
+    <div *ngFor="let msg of messages" class="message-row" [ngClass]="msg.role">
+
+      <!-- User message -->
+      <div *ngIf="msg.role === 'user'" class="bubble user-bubble">
+        <p>{{ msg.content }}</p>
+        <span class="ts">{{ msg.timestamp | date:'HH:mm' }}</span>
+      </div>
+
+      <!-- Loading animation -->
+      <div *ngIf="msg.role === 'loading'" class="bubble assistant-bubble loading-bubble">
+        <div class="avatar">🤖</div>
+        <div class="loading-content">
+          <div class="dots-loader">
+            <span></span><span></span><span></span>
+          </div>
+          <p class="loading-phrase">{{ currentLoadingPhrase }}</p>
+        </div>
+      </div>
+
+      <!-- Assistant message -->
+      <div *ngIf="msg.role === 'assistant'" class="bubble assistant-bubble">
+        <div class="avatar">🤖</div>
+        <div class="response-content">
+
+          <!-- Risk badges -->
+          <div class="risk-section" *ngIf="msg.riskLevel || msg.ruleRisk">
+            <span class="risk-label">Risk Level</span>
+            <span *ngIf="msg.riskLevel" class="risk-badge" [ngClass]="getRiskClass(msg.riskLevel)">
+              <span class="risk-dot"></span>
+              {{ msg.riskLevel | uppercase }}
+            </span>
+            <span *ngIf="msg.ruleRisk" class="rule-badge" [ngClass]="getRiskClass(msg.ruleRisk)">
+              Rule-based: {{ msg.ruleRisk }}
+            </span>
+          </div>
+
+          <!-- The response text — always rendered directly, no conditions -->
+          <p class="plain-text-response">{{ msg.content }}</p>
+
+          <span class="ts">{{ msg.timestamp | date:'HH:mm' }}</span>
+        </div>
+      </div>
+
+      <!-- Feedback -->
+      <div *ngIf="msg.role === 'assistant' && msg.showFeedback && !msg.feedbackDone"
+           class="feedback-wrapper animate-in">
+        <app-feedback [msgId]="msg.id" (feedbackSubmitted)="onFeedbackDone(msg.id)"></app-feedback>
+      </div>
+
+      <div *ngIf="msg.role === 'assistant' && msg.feedbackDone" class="feedback-done">
+        ✅ {{ language === 'fr' ? 'Merci pour votre retour !' : 'Thank you for your feedback!' }}
+      </div>
+    </div>
+
+    <div #messagesEnd></div>
+  </div>
+
+  <!-- Input Bar -->
+  <div class="input-bar">
+    <textarea
+      [(ngModel)]="userInput"
+      (keydown)="onKeyDown($event)"
+      [placeholder]="language === 'fr' ? 'Décrivez vos symptômes...' : 'Describe your symptoms...'"
+      rows="1"
+      [disabled]="isLoading"
+      class="input-field">
+    </textarea>
+    <button (click)="send()" [disabled]="isLoading || !userInput.trim()" class="send-btn">
+      <span *ngIf="!isLoading">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </span>
+      <span *ngIf="isLoading" class="btn-spinner"></span>
+    </button>
+  </div>
+</div>

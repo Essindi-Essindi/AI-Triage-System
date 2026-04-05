@@ -1,0 +1,32 @@
+[
+  {
+    "topic": "fever",
+    "title": "WHO Guidelines on Fever Management",
+    "url": "https://www.who.int",
+    "author": "World Health Organization, 2021"
+  },
+  {
+    "topic": "chest pain",
+    "title": "High-performance medicine: convergence of human and AI",
+    "url": "https://doi.org/10.1038/s41591-018-0300-7",
+    "author": "Topol, E.J., Nature Medicine, 2019"
+  },
+  {
+    "topic": "triage",
+    "title": "AI for triage in the emergency department",
+    "url": "https://doi.org/10.1007/s10916-022-01805-9",
+    "author": "Wongcharoen et al., Journal of Medical Systems, 2022"
+  },
+  {
+    "topic": "risk",
+    "title": "AI in health and medicine",
+    "url": "https://doi.org/10.1038/s41591-021-01614-0",
+    "author": "Rajpurkar et al., Nature Medicine, 2022"
+  },
+  {
+    "topic": "recommendation",
+    "title": "Large language models for healthcare",
+    "url": "https://arxiv.org/abs/2301.09041",
+    "author": "Zhou et al., arXiv, 2023"
+  }
+]

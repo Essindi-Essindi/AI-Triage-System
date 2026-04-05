@@ -1,0 +1,115 @@
+.feedback-card {
+  background: var(--feedback-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: slideUp 0.3s ease;
+
+  .feedback-prompt {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  .rating-btns {
+    display: flex;
+    gap: 8px;
+
+    .rating-btn {
+      padding: 6px 16px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-family: inherit;
+      color: var(--text);
+      transition: all 0.2s;
+      font-weight: 600;
+
+      &:hover { border-color: var(--accent); }
+
+      &.selected.positive {
+        background: rgba(34,197,94,0.12);
+        border-color: #22c55e;
+        color: #22c55e;
+      }
+
+      &.selected.negative {
+        background: rgba(239,68,68,0.12);
+        border-color: #ef4444;
+        color: #ef4444;
+      }
+    }
+  }
+
+  .comment-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+    animation: slideUp 0.25s ease;
+
+    .comment-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: var(--input-bg);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-family: inherit;
+      resize: none;
+      outline: none;
+
+      &:focus { border-color: var(--accent); }
+      &::placeholder { color: var(--text-muted); }
+    }
+
+    .submit-btn {
+      padding: 8px 18px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-family: inherit;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: all 0.2s;
+
+      &:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+      &:disabled { opacity: 0.6; cursor: not-allowed; }
+    }
+  }
+
+  .feedback-error {
+    margin: 0;
+    font-size: 0.78rem;
+    color: #ef4444;
+  }
+
+  .mini-spin {
+    display: block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto;
+  }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

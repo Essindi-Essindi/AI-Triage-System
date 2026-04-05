@@ -1,0 +1,29 @@
+<div class="feedback-card">
+  <p class="feedback-prompt">Was this response helpful?</p>
+
+  <div class="rating-btns">
+    <button [class.selected]="rating === 'useful'"
+            (click)="select('useful')"
+            class="rating-btn positive">
+      👍 Useful
+    </button>
+    <button [class.selected]="rating === 'not useful'"
+            (click)="select('not useful')"
+            class="rating-btn negative">
+      👎 Not useful
+    </button>
+  </div>
+
+  <div class="comment-row" *ngIf="rating">
+    <textarea [(ngModel)]="comment"
+              placeholder="Leave a comment (optional)..."
+              rows="2"
+              class="comment-input"></textarea>
+    <button (click)="submit()" [disabled]="submitting" class="submit-btn">
+      <span *ngIf="!submitting">Send</span>
+      <span *ngIf="submitting" class="mini-spin"></span>
+    </button>
+  </div>
+
+  <p *ngIf="error" class="feedback-error">{{ error }}</p>
+</div>
