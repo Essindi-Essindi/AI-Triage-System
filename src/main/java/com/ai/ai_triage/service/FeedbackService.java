@@ -23,6 +23,10 @@ public class FeedbackService {
         );
     }
 
+    public List<Feedback> getAll() {
+        return feedbackRepository.findAll();
+    }
+
     public Map<String, Object> getSummary() {
         List<Feedback> all = feedbackRepository.findAll();
 

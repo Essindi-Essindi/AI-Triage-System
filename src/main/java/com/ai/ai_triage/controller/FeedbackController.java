@@ -1,10 +1,12 @@
 package com.ai.ai_triage.controller;
 
 import com.ai.ai_triage.dto.FeedbackRequest;
+import com.ai.ai_triage.entity.Feedback;
 import com.ai.ai_triage.service.FeedbackService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -27,4 +29,10 @@ public class FeedbackController {
     public ResponseEntity<Map<String, Object>> getSummary() {
         return ResponseEntity.ok(feedbackService.getSummary());
     }
+
+    @GetMapping("/feedback/all")
+    public ResponseEntity<List<Feedback>> getAllFeedback() {
+        return ResponseEntity.ok(feedbackService.getAll());
+    }
+
 }

@@ -490,3 +490,110 @@
 
   .how-it-works .steps .step-arrow { display: none; }
 }
+
+/* ── Community Reviews Section ── */
+.reviews-section {
+  padding: 80px 40px;
+  background: var(--section-alt-bg);
+  border-top: 1px solid var(--border);
+
+  .reviews-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    text-align: center;
+
+    h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      color: var(--text);
+      margin: 0;
+    }
+  }
+
+  .no-reviews {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-style: italic;
+    margin: 0;
+  }
+
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    width: 100%;
+    text-align: left;
+  }
+
+  .review-card {
+    background: var(--chat-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(var(--accent-rgb), 0.1);
+    }
+  }
+
+  .review-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .review-avatar {
+    font-size: 1.4rem;
+    width: 36px;
+    height: 36px;
+    background: var(--chip-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .review-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  .badge-useful {
+    background: rgba(34, 197, 94, 0.12);
+    color: #22c55e;
+    border: 1.5px solid rgba(34, 197, 94, 0.3);
+  }
+
+  .badge-not-useful {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+    border: 1.5px solid rgba(239, 68, 68, 0.3);
+  }
+
+  .review-comment {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--text);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  @media (max-width: 768px) {
+    padding: 60px 20px;
+    .reviews-grid { grid-template-columns: 1fr; }
+  }
+}

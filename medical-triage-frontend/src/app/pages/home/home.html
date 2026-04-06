@@ -7,8 +7,8 @@
       <span class="logo-badge">AI</span>
     </div>
     <nav class="nav-links">
-      <a href="#about">About</a>
-      <a href="#chat-section">Chat</a>
+      <a href="#about" (click)="scrollToChat($event); false">About</a>
+      <a href="#" (click)="scrollToChat($event)">Chat</a>
     </nav>
     <button class="theme-btn" (click)="toggleTheme()" [title]="darkMode ? 'Switch to Light' : 'Switch to Dark'">
       <span>{{ darkMode ? '☀️' : '🌙' }}</span>
@@ -28,7 +28,7 @@
       <h1>Your Intelligent<br><span class="gradient-text">Medical Triage</span><br>Assistant</h1>
       <p class="hero-sub">Describe your symptoms and receive an AI-powered risk assessment.<br>Available in English and French. Always consult a physician for medical decisions.</p>
       <div class="hero-cta">
-        <a href="#chat-section" class="btn-primary">
+        <a href="#" (click)="scrollToChat($event)" class="btn-primary">
           <span>Start Consultation</span>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
         </a>
@@ -98,6 +98,31 @@
       </div>
       <div class="chat-panel">
         <app-chat></app-chat>
+      </div>
+    </div>
+  </section>
+
+  <!-- Community Reviews -->
+  <section class="reviews-section">
+    <div class="reviews-inner">
+      <div class="section-tag">Community</div>
+      <h2>💬 What users are saying</h2>
+
+      <p *ngIf="allFeedback.length === 0" class="no-reviews">
+        No reviews yet. Be the first to leave feedback after a consultation!
+      </p>
+
+      <div class="reviews-grid" *ngIf="allFeedback.length > 0">
+        <div class="review-card" *ngFor="let f of allFeedback">
+          <div class="review-header">
+            <span class="review-avatar">👤</span>
+            <span class="review-badge"
+                  [ngClass]="f.rating === 'useful' ? 'badge-useful' : 'badge-not-useful'">
+              {{ f.rating === 'useful' ? '👍 Useful' : '👎 Not useful' }}
+            </span>
+          </div>
+          <p class="review-comment">"{{ f.comment }}"</p>
+        </div>
       </div>
     </div>
   </section>

@@ -6,12 +6,10 @@ import { FeedbackComponent } from '../feedback/feedback';
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'loading';
-  // Parsed sections (only for assistant messages)
-  bodyText?: string;       // main response paragraphs
-  riskLevel?: string;      // extracted: low | medium | high
-  ruleRisk?: string;       // from rule-based engine
-  reference?: string;      // the "Reference: ..." line
-  // Raw (kept for DB / fallback)
+  bodyText?: string;
+  riskLevel?: string;
+  ruleRisk?: string;
+  reference?: string;
   content: string;
   timestamp: Date;
   showFeedback?: boolean;
@@ -28,6 +26,7 @@ export interface ChatMessage {
 })
 export class ChatComponent implements AfterViewChecked {
   @ViewChild('messagesEnd') private messagesEnd!: ElementRef;
+  @ViewChild('messagesArea') private messagesArea!: ElementRef;
 
   messages: ChatMessage[] = [];
   userInput = '';
@@ -36,6 +35,9 @@ export class ChatComponent implements AfterViewChecked {
   language = 'en';
   isLoading = false;
   msgCounter = 0;
+
+  // Only scroll when a new message is added, not on every keystroke
+  private shouldScrollToBottom = false;
 
   loadingPhrases = [
     '🩺 Consulting well-known medical references...',
@@ -53,11 +55,21 @@ export class ChatComponent implements AfterViewChecked {
   ) {}
 
   ngAfterViewChecked() {
-    this.scrollToBottom();
+    // Only scroll the chat box when a new message arrives — never on keystrokes
+    if (this.shouldScrollToBottom) {
+      this.scrollChatToBottom();
+      this.shouldScrollToBottom = false;
+    }
   }
 
-  private scrollToBottom() {
-    try { this.messagesEnd?.nativeElement.scrollIntoView({ behavior: 'smooth' }); } catch {}
+  private scrollChatToBottom() {
+    try {
+      // Scroll only the messages area div, NOT the whole page
+      const area = this.messagesArea?.nativeElement;
+      if (area) {
+        area.scrollTop = area.scrollHeight;
+      }
+    } catch {}
   }
 
   private cycleLoadingPhrases() {
@@ -73,12 +85,6 @@ export class ChatComponent implements AfterViewChecked {
     if (this.phraseInterval) { clearInterval(this.phraseInterval); this.phraseInterval = null; }
   }
 
-  /**
-   * Splits the LLM plain-text response into three display sections:
-   *   bodyText  — everything before "Risk level:" line
-   *   riskLevel — low | medium | high
-   *   reference — the "Reference: ..." line
-   */
   parseResponse(raw: string): { bodyText: string; riskLevel: string; reference: string } {
     const riskRegex = /^Risk level:\s*(low|medium|high)\s*$/im;
     const refRegex  = /^Reference:\s*(.+)$/im;
@@ -87,23 +93,19 @@ export class ChatComponent implements AfterViewChecked {
     let riskLevel = '';
     let reference = '';
 
-    // Extract reference line
     const refMatch = raw.match(refRegex);
     if (refMatch) {
       reference = refMatch[0].replace(/^Reference:\s*/i, '').trim();
       bodyText  = bodyText.replace(refMatch[0], '').trim();
     }
 
-    // Extract risk level line
     const riskMatch = raw.match(riskRegex);
     if (riskMatch) {
       riskLevel = riskMatch[1].toLowerCase();
       bodyText  = bodyText.replace(riskMatch[0], '').trim();
     }
 
-    // Clean up any leftover blank lines from the removals
     bodyText = bodyText.replace(/\n{3,}/g, '\n\n').trim();
-
     return { bodyText, riskLevel, reference };
   }
 
@@ -136,6 +138,7 @@ export class ChatComponent implements AfterViewChecked {
 
     this.userInput = '';
     this.isLoading = true;
+    this.shouldScrollToBottom = true; // scroll only now that a message was added
     this.cycleLoadingPhrases();
 
     const request: TriageRequest = {
@@ -168,6 +171,7 @@ export class ChatComponent implements AfterViewChecked {
           id: assistantMsgId
         });
 
+        this.shouldScrollToBottom = true; // scroll when response arrives
         this.cdr.detectChanges();
 
         setTimeout(() => {
@@ -186,6 +190,7 @@ export class ChatComponent implements AfterViewChecked {
           : `⚠️ Error ${err.status || ''}: Unable to reach the medical server. Check that the backend is running on localhost:8080.`;
 
         this.messages.push({ role: 'assistant', content: errMsg, timestamp: new Date(), id: this.msgCounter++ });
+        this.shouldScrollToBottom = true;
         this.cdr.detectChanges();
       }
     });

@@ -7,8 +7,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="AI-powered medical triage assistant. Describe your symptoms and get a risk assessment in English or French.">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <script>
+    // Strip any leftover hash from URL immediately
+    if (window.location.hash) {
+      history.replaceState(null, '', window.location.pathname);
+    }
+    // Scroll to top after Angular finishes rendering
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      }, 0);
+    });
+  </script>
 </head>
 <body>
-  <app-root></app-root>
+<app-root></app-root>
 </body>
 </html>

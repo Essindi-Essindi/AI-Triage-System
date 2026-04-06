@@ -7,6 +7,12 @@ export interface FeedbackRequest {
   comment: string;
 }
 
+export interface FeedbackEntry {
+  id: number;
+  rating: string;
+  comment: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class FeedbackService {
   private readonly apiUrl = 'http://localhost:8080/api';
@@ -15,5 +21,9 @@ export class FeedbackService {
 
   submit(feedback: FeedbackRequest): Observable<string> {
     return this.http.post(`${this.apiUrl}/feedback`, feedback, { responseType: 'text' });
+  }
+
+  getAll(): Observable<FeedbackEntry[]> {
+    return this.http.get<FeedbackEntry[]>(`${this.apiUrl}/feedback/all`);
   }
 }

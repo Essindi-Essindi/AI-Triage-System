@@ -4,48 +4,58 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
 
-/* Light theme (default) */
+/* ── Light theme — warm, easy on the eyes ── */
 :root, [data-theme="light"] {
   --font-display: 'Sora', sans-serif;
   --font-body:    'DM Sans', sans-serif;
 
-  --page-bg:        #f8fafc;
-  --chat-bg:        #ffffff;
-  --settings-bg:    #f1f5f9;
-  --section-alt-bg: #f4f7fb;
-  --header-bg:      rgba(248,250,252,0.85);
-  --bubble-bg:      #f8fafc;
-  --input-bg:       #ffffff;
-  --input-bar-bg:   #f8fafc;
-  --chip-bg:        #f1f5f9;
-  --feedback-bg:    #f8fafc;
-  --avatar-bg:      #e8f0fe;
-  --tag-bg:         #f1f5f9;
-  --ref-bg:         #eff6ff;
-  --seg-bg:         #e8edf4;
+  /* Backgrounds — warm grey instead of pure white */
+  --page-bg:        #eef0f4;
+  --chat-bg:        #f5f6f8;
+  --settings-bg:    #e6e8ed;
+  --section-alt-bg: #e9ebf0;
+  --header-bg:      rgba(238, 240, 244, 0.90);
+  --bubble-bg:      #f5f6f8;
+  --input-bg:       #f0f1f4;
+  --input-bar-bg:   #e9ebf0;
+  --chip-bg:        #e2e4ea;
+  --feedback-bg:    #eef0f4;
+  --avatar-bg:      #dce4f0;
+  --tag-bg:         #e2e4ea;
+  --ref-bg:         #e8eef8;
+  --seg-bg:         #dde0e8;
 
-  --text:           #0f172a;
-  --text-muted:     #64748b;
-  --border:         #e2e8f0;
+  /* Text — deep navy/charcoal, never pure black */
+  --text:           #1e2535;
+  --text-muted:     #4f5b73;
+  --text-secondary: #3d4a60;
 
+  /* Border — soft, visible but not harsh */
+  --border:         #cdd1db;
+
+  /* Accent */
   --accent:         #2563eb;
   --accent-dark:    #1d4ed8;
   --accent-bright:  #60a5fa;
   --accent-rgb:     37, 99, 235;
 
+  /* Hero */
   --orb-1: radial-gradient(circle, #bfdbfe, #93c5fd);
   --orb-2: radial-gradient(circle, #ddd6fe, #c4b5fd);
   --orb-3: radial-gradient(circle, #bbf7d0, #86efac);
-  --grid-line: rgba(37, 99, 235, 0.06);
+  --grid-line: rgba(37, 99, 235, 0.05);
 }
 
-/* Dark theme */
+/* ── Dark theme — unchanged ── */
 [data-theme="dark"] {
+  --font-display: 'Sora', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+
   --page-bg:        #0a0f1e;
   --chat-bg:        #0f172a;
   --settings-bg:    #0d1425;
   --section-alt-bg: #0c1220;
-  --header-bg:      rgba(10,15,30,0.85);
+  --header-bg:      rgba(10, 15, 30, 0.85);
   --bubble-bg:      #1e293b;
   --input-bg:       #1e293b;
   --input-bar-bg:   #0f172a;
@@ -58,6 +68,8 @@
 
   --text:           #f1f5f9;
   --text-muted:     #94a3b8;
+  --text-secondary: #a0aec0;
+
   --border:         #334155;
 
   --accent:         #3b82f6;
@@ -71,7 +83,7 @@
   --grid-line: rgba(59, 130, 246, 0.08);
 }
 
-/* Reset & base */
+/* ── Reset & base ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
@@ -94,8 +106,20 @@ input, textarea, button, select {
 
 img { max-width: 100%; }
 
-/* Scrollbar */
+/* ── Scrollbar ── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ── Focus ring ── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── Responsive base font ── */
+@media (max-width: 480px) {
+  html { font-size: 15px; }
+}
