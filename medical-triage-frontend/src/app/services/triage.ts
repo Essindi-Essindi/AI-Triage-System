@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, catchError, throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface TriageRequest {
   symptoms: string;
@@ -16,7 +17,7 @@ export interface TriageResponse {
 
 @Injectable({ providedIn: 'root' })
 export class TriageService {
-  private readonly apiUrl = 'http://localhost:8080/api';
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

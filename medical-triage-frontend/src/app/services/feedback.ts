@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface FeedbackRequest {
   rating: string;
@@ -15,7 +16,7 @@ export interface FeedbackEntry {
 
 @Injectable({ providedIn: 'root' })
 export class FeedbackService {
-  private readonly apiUrl = 'http://localhost:8080/api';
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
