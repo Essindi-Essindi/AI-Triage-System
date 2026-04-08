@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://YOUR-RENDER-BACKEND-URL.onrender.com/api'
+  apiUrl: 'https://ai-triage-system-1-9gmb.onrender.com'
 };
