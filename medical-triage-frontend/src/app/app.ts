@@ -8,5 +8,5 @@ import { RouterOutlet } from '@angular/router';
   styles: []
 })
 export class App {
-  title = 'MediTriage AI';
+  title = 'MediGuide AI';
 }

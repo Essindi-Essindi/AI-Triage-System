@@ -187,7 +187,7 @@ export class ChatComponent implements AfterViewChecked {
 
         const errMsg = err.status === 429
           ? '⚠️ The AI service is temporarily rate-limited. Please wait a moment and try again.'
-          : `⚠️ Error ${err.status || ''}: Unable to reach the medical server. Check that the backend is running on localhost:8080.`;
+          : `⚠️ Error ${err.status || ''}: Unable to reach the medical server. Please try later`;
 
         this.messages.push({ role: 'assistant', content: errMsg, timestamp: new Date(), id: this.msgCounter++ });
         this.shouldScrollToBottom = true;
