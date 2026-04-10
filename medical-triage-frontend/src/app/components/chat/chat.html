@@ -33,7 +33,7 @@
   </div>
 
   <!-- Messages -->
-  <div class="messages-area">
+  <div class="messages-area" #messagesArea>
     <div *ngIf="messages.length === 0" class="empty-state">
       <div class="pulse-ring"></div>
       <div class="empty-icon">🩺</div>
@@ -65,9 +65,7 @@
         </div>
       </div>
 
-      <!-- ═══════════════════════════════════════════
-           Assistant message — structured layout
-           ═══════════════════════════════════════════ -->
+      <!-- Assistant message -->
       <div *ngIf="msg.role === 'assistant'" class="bubble assistant-bubble">
         <div class="avatar">🤖</div>
         <div class="response-content">
@@ -75,10 +73,10 @@
           <!-- 1. Main response body -->
           <p class="plain-text-response">{{ msg.bodyText || msg.content }}</p>
 
-          <!-- divider before meta info -->
+          <!-- divider -->
           <div class="meta-divider"></div>
 
-          <!-- 2. Risk Level — own line -->
+          <!-- 2. Risk Level -->
           <div class="response-meta-row" *ngIf="msg.riskLevel">
             <span class="meta-label">Risk Level</span>
             <span class="risk-badge" [ngClass]="getRiskClass(msg.riskLevel)">
@@ -87,7 +85,7 @@
             </span>
           </div>
 
-          <!-- 3. Rule-based — own line, with explanation -->
+          <!-- 3. Rule-based -->
           <div class="response-meta-row" *ngIf="msg.ruleRisk">
             <span class="meta-label">
               Automated Classification
@@ -98,10 +96,16 @@
             </span>
           </div>
 
-          <!-- 4. Reference — own line -->
-          <div class="response-meta-row reference-row" *ngIf="msg.reference">
-            <span class="meta-label">📚 Medical Reference</span>
-            <span class="reference-text">{{ msg.reference }}</span>
+          <!-- 4. FIXED: Multiple references — one per line -->
+          <div class="response-meta-row reference-row"
+               *ngIf="msg.references && msg.references.length > 0">
+            <span class="meta-label">📚 Medical References</span>
+            <div class="references-list">
+              <span class="reference-text"
+                    *ngFor="let ref of msg.references; let i = index">
+                {{ i + 1 }}. {{ ref }}
+              </span>
+            </div>
           </div>
 
           <span class="ts">{{ msg.timestamp | date:'HH:mm' }}</span>
