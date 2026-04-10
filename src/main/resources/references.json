@@ -28,5 +28,329 @@
     "title": "Large language models for healthcare",
     "url": "https://arxiv.org/abs/2301.09041",
     "author": "Zhou et al., arXiv, 2023"
+  },
+
+
+  {
+    "topic": "heart attack",
+    "title": "2023 ESC Guidelines for the Management of Acute Coronary Syndromes",
+    "url": "https://doi.org/10.1093/eurheartj/ehad191",
+    "author": "Byrne et al., European Heart Journal, 2023"
+  },
+  {
+    "topic": "hypertension",
+    "title": "2023 ESH Guidelines for the Management of Arterial Hypertension",
+    "url": "https://doi.org/10.1097/HJH.0000000000003480",
+    "author": "Mancia et al., Journal of Hypertension, 2023"
+  },
+  {
+    "topic": "heart failure",
+    "title": "2021 ESC Guidelines for the Diagnosis and Treatment of Acute and Chronic Heart Failure",
+    "url": "https://doi.org/10.1093/eurheartj/ehab368",
+    "author": "McDonagh et al., European Heart Journal, 2021"
+  },
+  {
+    "topic": "arrhythmia",
+    "title": "2020 ESC Guidelines for the Diagnosis and Management of Atrial Fibrillation",
+    "url": "https://doi.org/10.1093/eurheartj/ehaa612",
+    "author": "Hindricks et al., European Heart Journal, 2020"
+  },
+  {
+    "topic": "palpitations",
+    "title": "Evaluation and Management of Palpitations in the Emergency Department",
+    "url": "https://doi.org/10.1016/j.ajem.2019.06.045",
+    "author": "Probst et al., American Journal of Emergency Medicine, 2019"
+  },
+
+
+  {
+    "topic": "cough",
+    "title": "ERS Guidelines on Diagnostic Approach to Chronic Cough",
+    "url": "https://doi.org/10.1183/13993003.01559-2019",
+    "author": "Morice et al., European Respiratory Journal, 2020"
+  },
+  {
+    "topic": "asthma",
+    "title": "GINA Global Strategy for Asthma Management and Prevention 2023",
+    "url": "https://ginasthma.org/reports/",
+    "author": "Global Initiative for Asthma, 2023"
+  },
+  {
+    "topic": "breathing",
+    "title": "GOLD Global Strategy for Prevention, Diagnosis and Management of COPD 2023",
+    "url": "https://goldcopd.org/2023-gold-report/",
+    "author": "Global Initiative for Chronic Obstructive Lung Disease, 2023"
+  },
+  {
+    "topic": "pneumonia",
+    "title": "IDSA/ATS Consensus Guidelines on the Management of Community-Acquired Pneumonia",
+    "url": "https://doi.org/10.1086/511159",
+    "author": "Mandell et al., Clinical Infectious Diseases, 2007"
+  },
+  {
+    "topic": "shortness of breath",
+    "title": "Dyspnoea: Mechanisms, Assessment and Management — A BTS Statement",
+    "url": "https://doi.org/10.1136/thx.2009.118947",
+    "author": "Booth et al., Thorax, 2010"
+  },
+
+
+  {
+    "topic": "headache",
+    "title": "ICHD-3: The International Classification of Headache Disorders, 3rd Edition",
+    "url": "https://doi.org/10.1177/0333102417738202",
+    "author": "Headache Classification Committee of the IHS, Cephalalgia, 2018"
+  },
+  {
+    "topic": "migraine",
+    "title": "EHF Practical Guideline on the Treatment of Migraine",
+    "url": "https://doi.org/10.1177/03331024211046743",
+    "author": "Eigenbrodt et al., Cephalalgia, 2021"
+  },
+  {
+    "topic": "stroke",
+    "title": "2019 AHA/ASA Guidelines for the Early Management of Acute Ischemic Stroke",
+    "url": "https://doi.org/10.1161/STR.0000000000000211",
+    "author": "Powers et al., Stroke, 2019"
+  },
+  {
+    "topic": "seizure",
+    "title": "ILAE Official Report: A Practical Clinical Definition of Epilepsy",
+    "url": "https://doi.org/10.1111/epi.12550",
+    "author": "Fisher et al., Epilepsia, 2014"
+  },
+  {
+    "topic": "dizziness",
+    "title": "Dizziness: A Practical Approach to Diagnosis and Management",
+    "url": "https://doi.org/10.1503/cmaj.070816",
+    "author": "Tusa, Canadian Medical Association Journal, 2009"
+  },
+
+
+  {
+    "topic": "abdominal pain",
+    "title": "ACG Clinical Guideline: Management of Irritable Bowel Syndrome",
+    "url": "https://doi.org/10.14309/ajg.0000000000002557",
+    "author": "Lacy et al., American Journal of Gastroenterology, 2021"
+  },
+  {
+    "topic": "vomiting",
+    "title": "ACG Clinical Guideline: Nausea and Vomiting of Pregnancy",
+    "url": "https://doi.org/10.14309/ajg.0000000000001728",
+    "author": "McParlin et al., American Journal of Gastroenterology, 2016"
+  },
+  {
+    "topic": "diarrhea",
+    "title": "WGO Global Guidelines: Acute Diarrhea in Adults and Children",
+    "url": "https://www.worldgastroenterology.org/guidelines/acute-diarrhea",
+    "author": "World Gastroenterology Organisation, 2012"
+  },
+  {
+    "topic": "nausea",
+    "title": "Management of Nausea and Vomiting in Clinical Practice",
+    "url": "https://doi.org/10.1056/NEJMcp1206249",
+    "author": "Quigley et al., New England Journal of Medicine, 2021"
+  },
+  {
+    "topic": "constipation",
+    "title": "ACG Clinical Guideline: Management of Benign Anorectal Disorders",
+    "url": "https://doi.org/10.14309/ajg.0000000000001507",
+    "author": "Wald et al., American Journal of Gastroenterology, 2021"
+  },
+
+
+  {
+    "topic": "diabetes",
+    "title": "ADA Standards of Medical Care in Diabetes 2024",
+    "url": "https://doi.org/10.2337/dc24-S001",
+    "author": "American Diabetes Association, Diabetes Care, 2024"
+  },
+  {
+    "topic": "thyroid",
+    "title": "ATA Guidelines for the Treatment of Hypothyroidism",
+    "url": "https://doi.org/10.1089/thy.2014.0028",
+    "author": "Jonklaas et al., Thyroid, 2014"
+  },
+  {
+    "topic": "obesity",
+    "title": "Obesity: Preventing and Managing the Global Epidemic — WHO Technical Report",
+    "url": "https://www.who.int/publications/i/item/obesity-preventing-and-managing-the-global-epidemic",
+    "author": "World Health Organization, 2000"
+  },
+
+
+  {
+    "topic": "infection",
+    "title": "WHO Guidelines on the Use of Antibiotics for Acute Respiratory Infections",
+    "url": "https://www.who.int/publications/i/item/9789241550017",
+    "author": "World Health Organization, 2022"
+  },
+  {
+    "topic": "malaria",
+    "title": "WHO Guidelines for the Treatment of Malaria, 3rd Edition",
+    "url": "https://www.who.int/publications/i/item/9789241549127",
+    "author": "World Health Organization, 2015"
+  },
+  {
+    "topic": "covid",
+    "title": "WHO Living Guideline: Therapeutics and COVID-19",
+    "url": "https://www.who.int/publications/i/item/WHO-2019-nCoV-therapeutics-2022.5",
+    "author": "World Health Organization, 2022"
+  },
+  {
+    "topic": "influenza",
+    "title": "WHO Guidelines for Pharmacological Management of Pandemic Influenza",
+    "url": "https://www.who.int/publications/i/item/WHO-CDS-EPR-GIP-2009.1",
+    "author": "World Health Organization, 2009"
+  },
+  {
+    "topic": "urinary tract infection",
+    "title": "EAU Guidelines on Urological Infections 2023",
+    "url": "https://uroweb.org/guidelines/urological-infections",
+    "author": "European Association of Urology, 2023"
+  },
+
+
+  {
+    "topic": "back pain",
+    "title": "Clinical Practice Guidelines for Chronic Low Back Pain",
+    "url": "https://doi.org/10.7326/M16-2367",
+    "author": "Qaseem et al., Annals of Internal Medicine, 2017"
+  },
+  {
+    "topic": "joint pain",
+    "title": "EULAR Recommendations for the Management of Rheumatoid Arthritis",
+    "url": "https://doi.org/10.1136/annrheumdis-2019-216655",
+    "author": "Smolen et al., Annals of the Rheumatic Diseases, 2020"
+  },
+  {
+    "topic": "fracture",
+    "title": "Management of Hip Fractures in Older People — SIGN Guideline 111",
+    "url": "https://www.sign.ac.uk/our-guidelines/management-of-hip-fractures-in-older-people/",
+    "author": "Scottish Intercollegiate Guidelines Network, 2009"
+  },
+
+
+  {
+    "topic": "rash",
+    "title": "European Guideline for the Management of Common Skin Conditions",
+    "url": "https://doi.org/10.1111/jdv.14714",
+    "author": "Nast et al., Journal of the European Academy of Dermatology, 2018"
+  },
+  {
+    "topic": "skin",
+    "title": "WHO Model Prescribing Information: Drugs Used in Skin Diseases",
+    "url": "https://www.who.int/publications/i/item/924140154X",
+    "author": "World Health Organization, 1997"
+  },
+  {
+    "topic": "allergy",
+    "title": "EAACI Guidelines on Allergen Immunotherapy",
+    "url": "https://doi.org/10.1111/all.13319",
+    "author": "Dhami et al., Allergy, 2017"
+  },
+
+
+  {
+    "topic": "anxiety",
+    "title": "NICE Guidelines: Generalised Anxiety Disorder and Panic Disorder in Adults",
+    "url": "https://www.nice.org.uk/guidance/cg113",
+    "author": "National Institute for Health and Care Excellence, 2019"
+  },
+  {
+    "topic": "depression",
+    "title": "APA Practice Guideline for the Treatment of Patients with Major Depressive Disorder",
+    "url": "https://doi.org/10.1176/appi.books.9780890423387",
+    "author": "American Psychiatric Association, 2010"
+  },
+  {
+    "topic": "stress",
+    "title": "WHO Comprehensive Mental Health Action Plan 2013–2030",
+    "url": "https://www.who.int/publications/i/item/9789240031029",
+    "author": "World Health Organization, 2021"
+  },
+  {
+    "topic": "insomnia",
+    "title": "ERS/ESRS Clinical Practice Guideline for Insomnia",
+    "url": "https://doi.org/10.1007/s11325-023-02802-9",
+    "author": "Riemann et al., Somnologie, 2023"
+  },
+
+
+  {
+    "topic": "child",
+    "title": "WHO Pocket Book of Hospital Care for Children, 2nd Edition",
+    "url": "https://www.who.int/publications/i/item/978924154837-9",
+    "author": "World Health Organization, 2013"
+  },
+  {
+    "topic": "vaccination",
+    "title": "WHO Recommendations for Routine Immunisation — Summary Tables",
+    "url": "https://www.who.int/teams/immunization-vaccines-and-biologicals/policies/who-recommendations-for-routine-immunization---summary-tables",
+    "author": "World Health Organization, 2023"
+  },
+
+
+  {
+    "topic": "cancer",
+    "title": "WHO Global Cancer Initiative: Principles for Action",
+    "url": "https://www.who.int/publications/i/item/9789240014343",
+    "author": "World Health Organization, 2020"
+  },
+  {
+    "topic": "tumour",
+    "title": "ESMO Clinical Practice Guidelines: Oncology",
+    "url": "https://www.esmo.org/guidelines",
+    "author": "European Society for Medical Oncology, 2023"
+  },
+
+
+  {
+    "topic": "kidney",
+    "title": "KDIGO Clinical Practice Guideline for the Evaluation and Management of CKD",
+    "url": "https://doi.org/10.1038/kisup.2012.73",
+    "author": "KDIGO CKD Work Group, Kidney International Supplements, 2013"
+  },
+
+
+  {
+    "topic": "eye",
+    "title": "WHO Global Initiative for the Elimination of Avoidable Blindness",
+    "url": "https://www.who.int/publications/i/item/WHO-PBL-97.61-Rev.2",
+    "author": "World Health Organization, 2000"
+  },
+
+
+  {
+    "topic": "bleeding",
+    "title": "CRASH-2 Trial: Tranexamic Acid in Bleeding Trauma Patients",
+    "url": "https://doi.org/10.1016/S0140-6736(10)60835-5",
+    "author": "CRASH-2 Collaborators, The Lancet, 2010"
+  },
+  {
+    "topic": "unconscious",
+    "title": "ERC Guidelines for Resuscitation 2021",
+    "url": "https://doi.org/10.1016/j.resuscitation.2021.02.009",
+    "author": "Nolan et al., Resuscitation, 2021"
+  },
+  {
+    "topic": "poisoning",
+    "title": "WHO Guidelines for the Management of Acute Poisoning",
+    "url": "https://www.who.int/publications/i/item/9241545127",
+    "author": "World Health Organization, 1997"
+  },
+
+
+  {
+    "topic": "pregnancy",
+    "title": "WHO Recommendations on Antenatal Care for a Positive Pregnancy Experience",
+    "url": "https://www.who.int/publications/i/item/9789241549912",
+    "author": "World Health Organization, 2016"
+  },
+  {
+    "topic": "menstrual",
+    "title": "FIGO Recommendations on Adolescent, Preconception and Maternal Nutrition",
+    "url": "https://doi.org/10.1002/ijgo.13196",
+    "author": "Williamson et al., International Journal of Gynecology & Obstetrics, 2020"
   }
 ]
