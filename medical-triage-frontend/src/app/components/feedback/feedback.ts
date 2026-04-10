@@ -30,8 +30,15 @@ export class FeedbackComponent {
     if (!this.rating) { this.error = 'Please select a rating first.'; return; }
     this.submitting = true;
     this.feedbackService.submit({ rating: this.rating, comment: this.comment }).subscribe({
-      next: () => { this.submitting = false; this.feedbackSubmitted.emit(); },
-      error: () => { this.submitting = false; this.error = 'Could not send feedback. Try again.'; }
+      next: () => {
+        this.submitting = false;
+        // Emit to chat, which bubbles up to home to trigger immediate refresh
+        this.feedbackSubmitted.emit();
+      },
+      error: () => {
+        this.submitting = false;
+        this.error = 'Could not send feedback. Try again.';
+      }
     });
   }
 }

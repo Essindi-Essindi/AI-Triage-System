@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, ChangeDetectorRef, NgZone, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TriageService, TriageRequest } from '../../services/triage';
@@ -9,7 +9,7 @@ export interface ChatMessage {
   bodyText?: string;
   riskLevel?: string;
   ruleRisk?: string;
-  references?: string[];   // CHANGED: array of references instead of single
+  references?: string[];
   content: string;
   timestamp: Date;
   showFeedback?: boolean;
@@ -28,6 +28,9 @@ export class ChatComponent implements AfterViewChecked {
   @ViewChild('messagesEnd') private messagesEnd!: ElementRef;
   @ViewChild('messagesArea') private messagesArea!: ElementRef;
 
+  // Bubbles up to HomeComponent so it can immediately refresh the reviews section
+  @Output() feedbackAdded = new EventEmitter<void>();
+
   messages: ChatMessage[] = [];
   userInput = '';
   age: number = 25;
@@ -39,11 +42,14 @@ export class ChatComponent implements AfterViewChecked {
   private shouldScrollToBottom = false;
 
   loadingPhrases = [
+    '🕛 Your diagnostics will be yours in a minute...',
     '🩺 Consulting well-known medical references...',
     '📚 Reviewing clinical guidelines...',
     '🔍 Analysing your symptoms carefully...',
     '⏳ Please be patient, your response is coming...',
     '💊 Cross-checking with medical knowledge base...',
+    '🧹 Wrapping things up...........',
+    '🏃🏽‍♂️ Almost there.....',
   ];
   currentLoadingPhrase = '';
   private phraseInterval: any;
@@ -51,7 +57,7 @@ export class ChatComponent implements AfterViewChecked {
   constructor(
     private triageService: TriageService,
     private cdr: ChangeDetectorRef,
-    private ngZone: NgZone   // ADDED: ensures CD runs inside Angular zone
+    private ngZone: NgZone
   ) {}
 
   ngAfterViewChecked() {
@@ -68,14 +74,12 @@ export class ChatComponent implements AfterViewChecked {
     } catch {}
   }
 
-  // FIXED: run phrase cycling inside NgZone so Angular detects changes in real time
   private cycleLoadingPhrases() {
     let i = 0;
     this.ngZone.run(() => {
       this.currentLoadingPhrase = this.loadingPhrases[0];
       this.cdr.detectChanges();
     });
-
     this.phraseInterval = setInterval(() => {
       this.ngZone.run(() => {
         i = (i + 1) % this.loadingPhrases.length;
@@ -89,7 +93,6 @@ export class ChatComponent implements AfterViewChecked {
     if (this.phraseInterval) { clearInterval(this.phraseInterval); this.phraseInterval = null; }
   }
 
-  // FIXED: parse ALL references (multiple lines starting with "Reference:")
   parseResponse(raw: string): { bodyText: string; riskLevel: string; references: string[] } {
     const riskRegex = /^Risk level:\s*(low|medium|high)\s*$/im;
     const refLineRegex = /^Reference:\s*(.+)$/gim;
@@ -98,7 +101,6 @@ export class ChatComponent implements AfterViewChecked {
     let riskLevel = '';
     const references: string[] = [];
 
-    // Extract all reference lines
     let refMatch;
     while ((refMatch = refLineRegex.exec(raw)) !== null) {
       const refValue = refMatch[1].trim();
@@ -106,7 +108,6 @@ export class ChatComponent implements AfterViewChecked {
       bodyText = bodyText.replace(refMatch[0], '');
     }
 
-    // Extract risk level
     const riskMatch = raw.match(riskRegex);
     if (riskMatch) {
       riskLevel = riskMatch[1].toLowerCase();
@@ -159,7 +160,6 @@ export class ChatComponent implements AfterViewChecked {
     this.triageService.analyze(request).subscribe({
       next: (res) => {
         this.stopLoadingPhrases();
-
         this.ngZone.run(() => {
           this.isLoading = false;
           this.messages = this.messages.filter(m => m.id !== loadingId);
@@ -215,6 +215,12 @@ export class ChatComponent implements AfterViewChecked {
 
   onFeedbackDone(msgId: number) {
     const msg = this.messages.find(m => m.id === msgId);
-    if (msg) { msg.feedbackDone = true; msg.showFeedback = false; this.cdr.detectChanges(); }
+    if (msg) {
+      msg.feedbackDone = true;
+      msg.showFeedback = false;
+      this.cdr.detectChanges();
+      // Notify home to immediately reload the reviews section
+      this.feedbackAdded.emit();
+    }
   }
 }
