@@ -11,7 +11,6 @@ import java.util.List;
 @Service
 public class MedicalReferenceService {
 
-    // Immutable value object — carried into the prompt builder
     public record ReferenceEntry(String topic, String title, String author, String url) {}
 
     private final List<ReferenceEntry> references = new ArrayList<>();
@@ -33,25 +32,39 @@ public class MedicalReferenceService {
     }
 
     /**
-     * Returns the best-matching ReferenceEntry for the given symptoms.
+     * Returns ALL matching ReferenceEntries for the given symptoms.
      * Falls back to the first entry if nothing matches.
      */
-    public ReferenceEntry findReferenceEntry(String symptoms) {
+    public List<ReferenceEntry> findAllMatchingReferences(String symptoms) {
         if (symptoms == null || references.isEmpty()) {
-            return new ReferenceEntry("general", "WHO Medical Guidelines",
-                    "World Health Organization", "https://www.who.int");
+            return List.of(new ReferenceEntry("general", "WHO Medical Guidelines",
+                    "World Health Organization", "https://www.who.int"));
         }
+
         String s = symptoms.toLowerCase();
+        List<ReferenceEntry> matched = new ArrayList<>();
+
         for (ReferenceEntry ref : references) {
-            if (s.contains(ref.topic())) return ref;
+            if (s.contains(ref.topic())) {
+                matched.add(ref);
+            }
         }
-        // Default: first entry
-        return references.get(0);
+
+        // Fallback to first entry if no match
+        if (matched.isEmpty()) {
+            matched.add(references.get(0));
+        }
+
+        return matched;
     }
 
     /**
-     * Legacy string form — kept so nothing else breaks if it was used elsewhere.
+     * Legacy single-entry lookup — kept for backward compatibility.
      */
+    public ReferenceEntry findReferenceEntry(String symptoms) {
+        return findAllMatchingReferences(symptoms).get(0);
+    }
+
     public String findReference(String symptoms) {
         ReferenceEntry ref = findReferenceEntry(symptoms);
         return String.format("According to %s, \"%s\": %s", ref.author(), ref.title(), ref.url());

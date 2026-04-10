@@ -3,12 +3,13 @@
   <header class="header">
     <div class="logo">
       <span class="logo-icon">⚕️</span>
-      <span class="logo-text">Medi<strong>Triage</strong></span>
+      <span class="logo-text">Medi<strong>Guide</strong></span>
       <span class="logo-badge">AI</span>
     </div>
     <nav class="nav-links">
-      <a href="#about" (click)="scrollToChat($event); false">About</a>
-      <a href="#" (click)="scrollToChat($event)">Chat</a>
+      <!-- FIXED: About now scrolls to #about (How it works), not chat -->
+      <a href="#about" (click)="scrollToAbout($event)">About</a>
+      <a href="#chat-section" (click)="scrollToChat($event)">Chat</a>
     </nav>
     <button class="theme-btn" (click)="toggleTheme()" [title]="darkMode ? 'Switch to Light' : 'Switch to Dark'">
       <span>{{ darkMode ? '☀️' : '🌙' }}</span>
@@ -28,7 +29,7 @@
       <h1>Your Intelligent<br><span class="gradient-text">Medical Triage</span><br>Assistant</h1>
       <p class="hero-sub">Describe your symptoms and receive an AI-powered risk assessment.<br>Available in English and French. Always consult a physician for medical decisions.</p>
       <div class="hero-cta">
-        <a href="#" (click)="scrollToChat($event)" class="btn-primary">
+        <a href="#chat-section" (click)="scrollToChat($event)" class="btn-primary">
           <span>Start Consultation</span>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
         </a>
@@ -58,10 +59,11 @@
     </div>
   </section>
 
-  <!-- How it works -->
+  <!-- How it works — FIXED: id="about" so the About nav link scrolls here -->
   <section class="how-it-works" id="about">
     <div class="section-inner">
       <div class="section-tag">How it works</div>
+      <p>MediGuide AI: A simple, trustworthy, and user-friendly AI Agent-Based Bilingual Medical Assistance and Triage System for Clinical Decision Support in a Resource-Limited Central African Context that guides patients through symptom evaluation and care decisions.</p>
       <h2>Three steps to peace of mind</h2>
       <div class="steps">
         <div class="step">
@@ -130,7 +132,7 @@
   <!-- Footer -->
   <footer class="footer">
     <div class="footer-inner">
-      <div class="footer-logo">⚕️ MediTriage AI</div>
+      <div class="footer-logo">⚕️ MediGuide AI</div>
       <p>Built for informational purposes only. Always consult a licensed medical professional.</p>
     </div>
   </footer>

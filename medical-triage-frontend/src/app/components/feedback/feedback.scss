@@ -105,6 +105,24 @@
   }
 }
 
+/* Add this to the bottom of chat.scss */
+
+/* Multiple references list */
+.references-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.references-list .reference-text {
+  font-size: 0.78rem;
+  color: var(--text-secondary, #555);
+  line-height: 1.5;
+  word-break: break-word;
+  display: block;
+}
+
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
