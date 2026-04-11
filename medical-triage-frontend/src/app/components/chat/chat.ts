@@ -28,7 +28,6 @@ export class ChatComponent implements AfterViewChecked {
   @ViewChild('messagesEnd') private messagesEnd!: ElementRef;
   @ViewChild('messagesArea') private messagesArea!: ElementRef;
 
-  // Bubbles up to HomeComponent so it can immediately refresh the reviews section
   @Output() feedbackAdded = new EventEmitter<void>();
 
   messages: ChatMessage[] = [];
@@ -197,9 +196,17 @@ export class ChatComponent implements AfterViewChecked {
           this.isLoading = false;
           this.messages = this.messages.filter(m => m.id !== loadingId);
 
-          const errMsg = err.status === 429
-            ? '⚠️ The AI service is temporarily rate-limited. Please wait a moment and try again.'
-            : `⚠️ Error ${err.status || ''}: Unable to reach the medical server. Please try later.`;
+          // User-friendly messages based on error type
+          let errMsg: string;
+          if (err.status === 429) {
+            errMsg = '⚠️ The AI service is temporarily rate-limited. Please wait a moment and try again.';
+          } else if (err.status === 0 || err.status === 504 || err.status === 503) {
+            errMsg = '⏳ The medical server is starting up — this can take up to 30 seconds on first use. Please try sending your message again in a moment.';
+          } else if (err.status === 500) {
+            errMsg = '⚠️ The server encountered an issue processing your request. Please try again in a few seconds.';
+          } else {
+            errMsg = `⚠️ Connection issue (${err.status || 'timeout'}). Please check your internet connection and try again.`;
+          }
 
           this.messages.push({ role: 'assistant', content: errMsg, timestamp: new Date(), id: this.msgCounter++ });
           this.shouldScrollToBottom = true;
@@ -219,7 +226,6 @@ export class ChatComponent implements AfterViewChecked {
       msg.feedbackDone = true;
       msg.showFeedback = false;
       this.cdr.detectChanges();
-      // Notify home to immediately reload the reviews section
       this.feedbackAdded.emit();
     }
   }

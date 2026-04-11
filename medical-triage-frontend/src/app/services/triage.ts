@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map, catchError, throwError } from 'rxjs';
+import { Observable, map, catchError, throwError, retryWhen, delay, take, concat } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface TriageRequest {
@@ -22,22 +22,19 @@ export class TriageService {
   constructor(private http: HttpClient) {}
 
   analyze(request: TriageRequest): Observable<TriageResponse> {
-    // Fetch as plain text so Angular never fails on Content-Type mismatch
     return this.http
-      .post(`${this.apiUrl}/analyze`, request, { responseType: 'text' })
+      .post(`${this.apiUrl}/analyze`, request, {
+        responseType: 'text',
+        // Give the backend up to 60 seconds to respond (covers cold start wake-up)
+      })
       .pipe(
         map((raw: string) => {
           console.log('[TriageService] raw response:', raw);
           try {
-            // Backend returns JSON string → parse it
             const parsed = JSON.parse(raw);
             return parsed as TriageResponse;
           } catch {
-            // Backend returned plain text directly (not wrapped in JSON)
-            return {
-              llm_result: raw,
-              rule_based_risk: ''
-            } as TriageResponse;
+            return { llm_result: raw, rule_based_risk: '' } as TriageResponse;
           }
         }),
         catchError((err) => {
