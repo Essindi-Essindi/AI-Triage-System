@@ -449,6 +449,11 @@
     &:disabled { opacity: 0.5; }
   }
 
+  .plain-text-response strong {
+    font-weight: 700;
+    color: var(--text);
+  }
+
   .send-btn {
     width: 48px;
     height: 48px;

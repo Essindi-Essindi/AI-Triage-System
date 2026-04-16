@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked, ChangeDetectorRef, NgZone, Output, EventEmitter } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TriageService, TriageRequest } from '../../services/triage';
@@ -9,7 +9,7 @@ export interface ChatMessage {
   bodyText?: string;
   riskLevel?: string;
   ruleRisk?: string;
-  references?: string[];
+  reference?: string;
   content: string;
   timestamp: Date;
   showFeedback?: boolean;
@@ -28,8 +28,6 @@ export class ChatComponent implements AfterViewChecked {
   @ViewChild('messagesEnd') private messagesEnd!: ElementRef;
   @ViewChild('messagesArea') private messagesArea!: ElementRef;
 
-  @Output() feedbackAdded = new EventEmitter<void>();
-
   messages: ChatMessage[] = [];
   userInput = '';
   age: number = 25;
@@ -38,28 +36,26 @@ export class ChatComponent implements AfterViewChecked {
   isLoading = false;
   msgCounter = 0;
 
+  // Only scroll when a new message is added, not on every keystroke
   private shouldScrollToBottom = false;
 
   loadingPhrases = [
-    '🕛 Your diagnostics will be yours in a minute...',
     '🩺 Consulting well-known medical references...',
     '📚 Reviewing clinical guidelines...',
     '🔍 Analysing your symptoms carefully...',
     '⏳ Please be patient, your response is coming...',
     '💊 Cross-checking with medical knowledge base...',
-    '🧹 Wrapping things up...........',
-    '🏃🏽‍♂️ Almost there.....',
   ];
   currentLoadingPhrase = '';
   private phraseInterval: any;
 
   constructor(
     private triageService: TriageService,
-    private cdr: ChangeDetectorRef,
-    private ngZone: NgZone
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngAfterViewChecked() {
+    // Only scroll the chat box when a new message arrives — never on keystrokes
     if (this.shouldScrollToBottom) {
       this.scrollChatToBottom();
       this.shouldScrollToBottom = false;
@@ -68,23 +64,20 @@ export class ChatComponent implements AfterViewChecked {
 
   private scrollChatToBottom() {
     try {
+      // Scroll only the messages area div, NOT the whole page
       const area = this.messagesArea?.nativeElement;
-      if (area) { area.scrollTop = area.scrollHeight; }
+      if (area) {
+        area.scrollTop = area.scrollHeight;
+      }
     } catch {}
   }
 
   private cycleLoadingPhrases() {
     let i = 0;
-    this.ngZone.run(() => {
-      this.currentLoadingPhrase = this.loadingPhrases[0];
-      this.cdr.detectChanges();
-    });
+    this.currentLoadingPhrase = this.loadingPhrases[0];
     this.phraseInterval = setInterval(() => {
-      this.ngZone.run(() => {
-        i = (i + 1) % this.loadingPhrases.length;
-        this.currentLoadingPhrase = this.loadingPhrases[i];
-        this.cdr.detectChanges();
-      });
+      i = (i + 1) % this.loadingPhrases.length;
+      this.currentLoadingPhrase = this.loadingPhrases[i];
     }, 2200);
   }
 
@@ -92,29 +85,65 @@ export class ChatComponent implements AfterViewChecked {
     if (this.phraseInterval) { clearInterval(this.phraseInterval); this.phraseInterval = null; }
   }
 
-  parseResponse(raw: string): { bodyText: string; riskLevel: string; references: string[] } {
+  parseResponse(raw: string): { bodyText: string; riskLevel: string; reference: string } {
     const riskRegex = /^Risk level:\s*(low|medium|high)\s*$/im;
-    const refLineRegex = /^Reference:\s*(.+)$/gim;
+    const refRegex  = /^Reference:\s*(.+)$/im;
 
-    let bodyText = raw;
+    let bodyText  = raw;
     let riskLevel = '';
-    const references: string[] = [];
+    let reference = '';
 
-    let refMatch;
-    while ((refMatch = refLineRegex.exec(raw)) !== null) {
-      const refValue = refMatch[1].trim();
-      if (refValue) references.push(refValue);
-      bodyText = bodyText.replace(refMatch[0], '');
+    const refMatch = raw.match(refRegex);
+    if (refMatch) {
+      reference = refMatch[0].replace(/^Reference:\s*/i, '').trim();
+      bodyText  = bodyText.replace(refMatch[0], '').trim();
     }
 
     const riskMatch = raw.match(riskRegex);
     if (riskMatch) {
       riskLevel = riskMatch[1].toLowerCase();
-      bodyText = bodyText.replace(riskMatch[0], '');
+      bodyText  = bodyText.replace(riskMatch[0], '').trim();
     }
 
     bodyText = bodyText.replace(/\n{3,}/g, '\n\n').trim();
-    return { bodyText, riskLevel, references };
+    return { bodyText, riskLevel, reference };
+  }
+
+  /**
+   * Finds the disclaimer sentence(s) in the LLM response — in both English and French —
+   * and wraps them in <strong> tags so they render in bold in the chat bubble.
+   *
+   * We cover multiple phrasings because the LLM does not always word them identically.
+   */
+  boldDisclaimer(text: string): string {
+    if (!text) return '';
+
+    // Preserve line breaks as <br> so paragraphs still display correctly
+    let result = text.replace(/\n/g, '<br>');
+
+    const patterns: RegExp[] = [
+      // English variants
+      /(However,\s*I must emphasise that this is purely a clinical suggestion[^.]*\.)/gi,
+      /(I must emphasise that this is purely a clinical suggestion[^.]*\.)/gi,
+      /(this is purely a clinical suggestion and not a confirmed diagnosis[^.]*\.)/gi,
+      /(this is not a confirmed diagnosis[^.]*?consult[^.]*\.)/gi,
+      /(Please note that this is not a confirmed diagnosis[^.]*\.)/gi,
+      /(I must stress that this is not a confirmed diagnosis[^.]*\.)/gi,
+      /(this represents a clinical suggestion only[^.]*\.)/gi,
+      // French variants
+      /(Cependant,\s*je dois souligner qu['']il s['']agit uniquement d['']une suggestion clinique[^.]*\.)/gi,
+      /(je dois souligner qu['']il s['']agit uniquement d['']une suggestion clinique[^.]*\.)/gi,
+      /(il s['']agit uniquement d['']une suggestion clinique et non d['']un diagnostic confirmé[^.]*\.)/gi,
+      /(il ne s['']agit pas d['']un diagnostic confirmé[^.]*\.)/gi,
+      /(ce n['']est pas un diagnostic confirmé[^.]*\.)/gi,
+      /(Veuillez noter qu['']il ne s['']agit pas d['']un diagnostic confirmé[^.]*\.)/gi,
+    ];
+
+    for (const pattern of patterns) {
+      result = result.replace(pattern, '<strong>$1</strong>');
+    }
+
+    return result;
   }
 
   getRiskClass(risk: string): string {
@@ -146,7 +175,7 @@ export class ChatComponent implements AfterViewChecked {
 
     this.userInput = '';
     this.isLoading = true;
-    this.shouldScrollToBottom = true;
+    this.shouldScrollToBottom = true; // scroll only now that a message was added
     this.cycleLoadingPhrases();
 
     const request: TriageRequest = {
@@ -159,59 +188,47 @@ export class ChatComponent implements AfterViewChecked {
     this.triageService.analyze(request).subscribe({
       next: (res) => {
         this.stopLoadingPhrases();
-        this.ngZone.run(() => {
-          this.isLoading = false;
-          this.messages = this.messages.filter(m => m.id !== loadingId);
+        this.isLoading = false;
+        this.messages = this.messages.filter(m => m.id !== loadingId);
 
-          const raw = res.llm_result || '(no response received)';
-          const { bodyText, riskLevel, references } = this.parseResponse(raw);
+        const raw = res.llm_result || '(no response received)';
+        const { bodyText, riskLevel, reference } = this.parseResponse(raw);
 
-          const assistantMsgId = this.msgCounter++;
-          this.messages.push({
-            role: 'assistant',
-            content: raw,
-            bodyText,
-            riskLevel: riskLevel || res.rule_based_risk,
-            ruleRisk: res.rule_based_risk,
-            references,
-            timestamp: new Date(),
-            showFeedback: false,
-            feedbackDone: false,
-            id: assistantMsgId
-          });
-
-          this.shouldScrollToBottom = true;
-          this.cdr.detectChanges();
-
-          setTimeout(() => {
-            const msg = this.messages.find(m => m.id === assistantMsgId);
-            if (msg) { msg.showFeedback = true; this.cdr.detectChanges(); }
-          }, 800);
+        const assistantMsgId = this.msgCounter++;
+        this.messages.push({
+          role: 'assistant',
+          content: raw,
+          bodyText,
+          riskLevel: riskLevel || res.rule_based_risk,
+          ruleRisk: res.rule_based_risk,
+          reference,
+          timestamp: new Date(),
+          showFeedback: false,
+          feedbackDone: false,
+          id: assistantMsgId
         });
+
+        this.shouldScrollToBottom = true; // scroll when response arrives
+        this.cdr.detectChanges();
+
+        setTimeout(() => {
+          const msg = this.messages.find(m => m.id === assistantMsgId);
+          if (msg) { msg.showFeedback = true; this.cdr.detectChanges(); }
+        }, 800);
       },
 
       error: (err) => {
         this.stopLoadingPhrases();
-        this.ngZone.run(() => {
-          this.isLoading = false;
-          this.messages = this.messages.filter(m => m.id !== loadingId);
+        this.isLoading = false;
+        this.messages = this.messages.filter(m => m.id !== loadingId);
 
-          // User-friendly messages based on error type
-          let errMsg: string;
-          if (err.status === 429) {
-            errMsg = '⚠️ The AI service is temporarily rate-limited. Please wait a moment and try again.';
-          } else if (err.status === 0 || err.status === 504 || err.status === 503) {
-            errMsg = '⏳ The medical server is starting up — this can take up to 30 seconds on first use. Please try sending your message again in a moment.';
-          } else if (err.status === 500) {
-            errMsg = '⚠️ The server encountered an issue processing your request. Please try again in a few seconds.';
-          } else {
-            errMsg = `⚠️ Connection issue (${err.status || 'timeout'}). Please check your internet connection and try again.`;
-          }
+        const errMsg = err.status === 429
+          ? '⚠️ The AI service is temporarily rate-limited. Please wait a moment and try again.'
+          : `⚠️ Error ${err.status || ''}: Unable to reach the medical server. Please try later`;
 
-          this.messages.push({ role: 'assistant', content: errMsg, timestamp: new Date(), id: this.msgCounter++ });
-          this.shouldScrollToBottom = true;
-          this.cdr.detectChanges();
-        });
+        this.messages.push({ role: 'assistant', content: errMsg, timestamp: new Date(), id: this.msgCounter++ });
+        this.shouldScrollToBottom = true;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -222,11 +239,6 @@ export class ChatComponent implements AfterViewChecked {
 
   onFeedbackDone(msgId: number) {
     const msg = this.messages.find(m => m.id === msgId);
-    if (msg) {
-      msg.feedbackDone = true;
-      msg.showFeedback = false;
-      this.cdr.detectChanges();
-      this.feedbackAdded.emit();
-    }
+    if (msg) { msg.feedbackDone = true; msg.showFeedback = false; this.cdr.detectChanges(); }
   }
 }
